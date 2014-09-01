@@ -24,6 +24,15 @@
 #define ACC_ARRAY
 
 #include <iostream>
+#include <stdexcept>
+#include <string>
+
+#define BOUNDS_CHECK(index) {                                                                                  \
+                                if (index < 0 || index >= m_size) {                                            \
+                                    throw std::runtime_error("Index out of bounds: " + std::to_string(index) + \
+                                                             ", size: " + std::to_string(m_size));             \
+                                }                                                                              \
+                            }
 
 namespace acc {
 
@@ -31,12 +40,10 @@ template<typename T>
 class Array {
 public:
     explicit Array(size_t initialCapacity = 10) : m_size(0), 
-                                                  m_capacity(initialCapacity > 1 ? initialCapacity : static_cast<size_t>(1)) {
-        allocStorage(m_capacity);
-    }
+                                                  m_capacity(initialCapacity > 1 ? initialCapacity : static_cast<size_t>(1)),
+                                                  m_content(new T[m_capacity]) {}
 
-    Array(const Array& other) : m_size(other.m_size), m_capacity(other.m_capacity) {
-        allocStorage(m_capacity);
+    Array(const Array& other) : m_size(other.m_size), m_capacity(other.m_capacity), m_content(new T[m_capacity]) {
         std::copy(other.m_content, other.m_content + other.m_capacity, m_content);
     }
 
@@ -45,10 +52,12 @@ public:
     }
 
     T& operator[](size_t index) {
+        BOUNDS_CHECK(index);
         return m_content[index];
     }
 
     const T& operator[](size_t index) const {
+        BOUNDS_CHECK(index);
         return m_content[index];
     }
 
@@ -61,6 +70,12 @@ public:
             m_content = newContent;
         }
         m_content[m_size++] = element;
+    }
+
+    void removeAt(size_t index) {
+        BOUNDS_CHECK(index);
+        std::copy(m_content + index + 1, m_content + m_size, m_content + index);
+        m_size--;
     }
 
     size_t size() const {
@@ -82,15 +97,11 @@ public:
     }
 
 private:
-    void allocStorage(size_t size) {
-        m_content = new T[size];
-    }
-
-    T* m_content;
     size_t m_size;
     size_t m_capacity;
+    T* m_content;
 };
 
 } // namespace acc
 
-#endif // ACC_ARRAY
+#endif // ACC_ARRAY:
