@@ -11,36 +11,6 @@
 template <typename T>
 class LinkedListIterator;
 
-template<typename T>
-class Iterator {
-private:
-	Iterator<T>* iterator;
-public:
-	Iterator(Iterator<T>* p_iterator) : iterator(p_iterator)
-	{
-	}
-
-	virtual T operator*() {
-		return *(*iterator);
-	}
-
-	virtual bool hasNext() {
-		return iterator->hasNext();
-	}
-
-	virtual void next() {
-		iterator->next();
-	}
-
-	virtual void remove() {
-		iterator->remove();
-	}
-
-	virtual ~Iterator() {
-		delete iterator;
-	}
-};
-
 template <typename T>
 class Node {
 public:
@@ -53,6 +23,7 @@ public:
 		prev = NULL;
 	}
 };
+
 
 template <typename T>
 class LinkedList {

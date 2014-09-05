@@ -26,18 +26,29 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <assert.h>
 
-#define BOUNDS_CHECK(index) {                                                                                  \
-                                if (index < 0 || index >= m_size) {                                            \
-                                    throw std::runtime_error("Index out of bounds: " + std::to_string(index) + \
-                                                             ", size: " + std::to_string(m_size));             \
-                                }                                                                              \
+#include "AbstractIterator.hpp"
+#include "Iterator.hpp"
+
+#define BOUNDS_CHECK(index, size) {                                                                           \
+                                assert(index >= 0);                                                           \
+                                if (index >= size) {                                                          \
+                                    throw std::out_of_range("Index out of bounds: " + std::to_string(index) + \
+                                                             ", size: " + std::to_string(size));              \
+                                }                                                                             \
                             }
 
 namespace acc {
 
 template<typename T>
+class ArrayIterator;
+
+template<typename T>
 class Array {
+
+   friend class ArrayIterator<T>;
+
 public:
     explicit Array(size_t initialCapacity = 10) : m_size(0), 
                                                   m_capacity(initialCapacity > 1 ? initialCapacity : static_cast<size_t>(1)),
@@ -52,12 +63,12 @@ public:
     }
 
     T& operator[](size_t index) {
-        BOUNDS_CHECK(index);
+        BOUNDS_CHECK(index, m_size);
         return m_content[index];
     }
 
     const T& operator[](size_t index) const {
-        BOUNDS_CHECK(index);
+        BOUNDS_CHECK(index, m_size);
         return m_content[index];
     }
 
@@ -73,13 +84,17 @@ public:
     }
 
     void removeAt(size_t index) {
-        BOUNDS_CHECK(index);
+        BOUNDS_CHECK(index, m_size);
         std::copy(m_content + index + 1, m_content + m_size, m_content + index);
         m_size--;
     }
 
     size_t size() const {
         return m_size;
+    }
+
+    Iterator<T> iter() {
+        return Iterator<T>(new ArrayIterator<T>(*this));
     }
 
     friend std::ostream& operator<<(std::ostream &out, const Array<T>& vec) {
@@ -100,6 +115,36 @@ private:
     size_t m_size;
     size_t m_capacity;
     T* m_content;
+};
+
+template<typename T>
+class ArrayIterator : public AbstractIterator<T> {
+public:
+    ArrayIterator(Array<T>& parent) : m_parent(parent), m_currentIndex(0) {}
+
+    virtual T& get() {
+        BOUNDS_CHECK(m_currentIndex, m_parent.m_size);
+        return m_parent[m_currentIndex];
+    }
+
+    virtual bool isValid() {
+        return m_currentIndex < m_parent.m_size;
+    }
+
+    virtual void next() {
+        m_currentIndex++;
+    }
+
+    virtual void remove() {
+        BOUNDS_CHECK(m_currentIndex, m_parent.m_size);
+        m_parent.removeAt(m_currentIndex);
+    }
+
+    virtual ~ArrayIterator() {}
+
+private:
+    Array<T>& m_parent;
+    size_t m_currentIndex;
 };
 
 } // namespace acc
