@@ -20,8 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef ACC_ABSTRACT_ITERATOR
-#define ACC_ABSTRACT_ITERATOR
+#pragma once
 
 namespace acc {
 
@@ -36,5 +35,3 @@ public:
 };
 
 } // namespace acc
-
-#endif // ACC_ABSTRACT_ITERATOR

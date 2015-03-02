@@ -20,9 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-
-#ifndef ACC_ITERATOR
-#define ACC_ITERATOR
+#pragma once
 
 #include <memory>
 
@@ -58,9 +56,7 @@ public:
     virtual ~Iterator() {}
 
 private:
-    std::shared_ptr<AbstractIterator<T>> m_iterator;
+    std::shared_ptr<AbstractIterator<T> > m_iterator;
 };
 
 } // namespace acc
-
-#endif // ACC_ITERATOR

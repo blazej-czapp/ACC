@@ -20,8 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef ACC_ARRAY
-#define ACC_ARRAY
+#pragma once
 
 #include <iostream>
 #include <stdexcept>
@@ -148,5 +147,3 @@ private:
 };
 
 } // namespace acc
-
-#endif // ACC_ARRAY:
