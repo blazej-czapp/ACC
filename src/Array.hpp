@@ -54,7 +54,7 @@ public:
                                                   m_content(new T[m_capacity]) {}
 
     Array(const Array& other) : m_size(other.m_size), m_capacity(other.m_capacity), m_content(new T[m_capacity]) {
-        std::copy(other.m_content, other.m_content + other.m_capacity, m_content);
+        std::copy(other.m_content, other.m_content + other.m_size, m_content);
     }
 
     virtual ~Array<T>() {
