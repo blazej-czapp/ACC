@@ -27,8 +27,10 @@ namespace acc {
 template<typename T>
 class AbstractIterator {
 public:
-    virtual T& next() = 0;
-    virtual bool hasNext() = 0;
+    virtual void next() = 0; 
+    virtual T& get() = 0; 
+    virtual int index() = 0; 
+    virtual bool hasCurrent() = 0; 
     virtual void remove() = 0;
     virtual ~AbstractIterator() {};
 };

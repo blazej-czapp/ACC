@@ -46,8 +46,8 @@ public:
 
 	LinkedList(LinkedList<T> &other) : LinkedList()
 	{
-		for(Iterator<T> it = other.iterator();it.hasNext();) {
-			this->add(it.next());
+		for(Iterator<T> it = other.iterator();it.hasCurrent();it.next()) {
+			this->add(it.get());
 		}
 	}
 
@@ -76,9 +76,9 @@ public:
 
 		if(index == m_size-1) {
 			Node<T> *new_one = new Node<T>(element);
-			new_one->prev = tail;
-			tail->next = new_one;
-			tail = new_one;
+			new_one->prev = tail->prev;
+			new_one->next = tail;
+			tail->prev->next = new_one;
 			m_size++;
 			return true;
 		} 
@@ -197,35 +197,48 @@ template <typename T>
 class LinkedListIterator : public AbstractIterator<T> {
 private:
 	LinkedList<T> *list;
-	Node<T> *current;
-	Node<T> *prev;
+	Node<T> *current, *nextAfterDelete;
+	int position;
 public:
 	LinkedListIterator(LinkedList<T> *p_list) : list(p_list)
 	{
 		current = list->head;
-		prev = NULL;
+		nextAfterDelete = NULL;
+		position = 0;
 	}
 
-	virtual bool hasNext() {
-		return current != NULL;
+	virtual bool hasCurrent() {
+		return current != NULL || nextAfterDelete != NULL;
 	}
 
-	virtual T& next() {
-		if(current != NULL) {
-			prev = current;
+	virtual int index() {
+		return position;
+	}
+
+	virtual void next() {
+		if(current == NULL && nextAfterDelete != NULL) {
+			current = nextAfterDelete;
+			nextAfterDelete = NULL;
+		} else if(current != NULL) {
 			current = current->next;
-			return prev->element;
+			position++;
 		} else {
-			//TODO: throw an error here 
+			//TODO: Throw something.
+		}
+	}
+
+	virtual T& get() {
+		if(current != NULL) {
+			return current->element;
+		} else {
+			//TODO: Throw something.
 		}
 	}
 
 	virtual void remove() {
-		if(prev != NULL) {
-			list->delete_node(prev);
-		} else {
-			//TODO: throw an error here? 
-		}
+		nextAfterDelete = current->next;
+		list->delete_node(current);
+		current = NULL;
 	}
 
 	virtual ~LinkedListIterator() {

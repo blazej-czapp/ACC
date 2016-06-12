@@ -70,13 +70,14 @@ void test_iterator__iteration() {
 
 	Iterator<int> iterator = list.iterator();
 	for(int i=0;i<100;i++) {
-		int value = iterator.next();
+		int value = iterator.get();
 		if(value != list.get(i)) {
 			printf("test_iterator__iteration failed, expected %d found %d\n", list.get(i), value);
 		}
+		iterator.next();
 	}
 
-	if(iterator.hasNext()) {
+	if(iterator.hasCurrent()) {
 		printf("test_iterator__iteration failed, hasNext returned where it should be empty\n");
 	}
 }

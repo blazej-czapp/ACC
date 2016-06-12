@@ -41,12 +41,20 @@ public:
     Iterator(AbstractIterator<T>* iterator) : m_iterator(iterator) {}
     Iterator(const Iterator<T>& other) : m_iterator(other.m_iterator) {}
 
-    virtual T& next() {
+    virtual void next() {
         return m_iterator->next();
     }
 
-    virtual bool hasNext() {
-        return m_iterator->hasNext();
+    virtual T& get() {
+        return m_iterator->get();
+    }
+
+    virtual int index() {
+        return m_iterator->index();
+    }
+
+    virtual bool hasCurrent() {
+        return m_iterator->hasCurrent();
     }
 
     virtual void remove() {
