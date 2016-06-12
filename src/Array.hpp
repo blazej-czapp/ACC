@@ -45,15 +45,27 @@ class ArrayIterator;
 
 template<typename T>
 class Array {
-
    friend class ArrayIterator<T>;
 
-public:
-    explicit Array(size_t initialCapacity = 10) : m_size(0), 
-                                                  m_capacity(initialCapacity > 1 ? initialCapacity : static_cast<size_t>(1)),
-                                                  m_content(new T[m_capacity]) {}
+private:
+    int m_size;
+    int m_capacity;
+    T* m_content;
 
-    Array(const Array& other) : m_size(other.m_size), m_capacity(other.m_capacity), m_content(new T[m_capacity]) {
+public:
+    explicit Array(int initialCapacity = 10) : 
+        m_size(0), 
+        m_capacity(initialCapacity > 1 ? initialCapacity : 1),
+        m_content(new T[m_capacity]) 
+    {
+
+    }
+
+    Array(const Array& other) : 
+        m_size(other.m_size), 
+        m_capacity(other.m_capacity), 
+        m_content(new T[m_capacity]) 
+    {
         std::copy(other.m_content, other.m_content + other.m_capacity, m_content);
     }
 
@@ -61,12 +73,12 @@ public:
         delete[] m_content;
     }
 
-    T& operator[](size_t index) {
+    T& operator[](int index) {
         BOUNDS_CHECK(index, m_size);
         return m_content[index];
     }
 
-    const T& operator[](size_t index) const {
+    const T& operator[](int index) const {
         BOUNDS_CHECK(index, m_size);
         return m_content[index];
     }
@@ -82,13 +94,13 @@ public:
         m_content[m_size++] = element;
     }
 
-    void removeAt(size_t index) {
+    void removeAt(int index) {
         BOUNDS_CHECK(index, m_size);
         std::copy(m_content + index + 1, m_content + m_size, m_content + index);
         m_size--;
     }
 
-    size_t size() const {
+    int size() const {
         return m_size;
     }
 
@@ -98,7 +110,7 @@ public:
 
     friend std::ostream& operator<<(std::ostream &out, const Array<T>& vec) {
         out << "[";
-        for (size_t i = 0; i < vec.m_size; i++) {
+        for (int i = 0; i < vec.m_size; i++) {
             out << vec.m_content[i];
 
             if (i < vec.m_size - 1) {
@@ -109,17 +121,20 @@ public:
         out << "]";
         return out;
     }
-
-private:
-    size_t m_size;
-    size_t m_capacity;
-    T* m_content;
 };
 
 template<typename T>
 class ArrayIterator : public AbstractIterator<T> {
+private:
+    Array<T>& m_parent;
+    int m_currentIndex;
 public:
-    ArrayIterator(Array<T>& parent) : m_parent(parent), m_currentIndex(0) {}
+    ArrayIterator(Array<T>& parent) : 
+        m_parent(parent), 
+        m_currentIndex(0) 
+    {
+
+    }
 
     virtual T& get() {
         BOUNDS_CHECK(m_currentIndex, m_parent.m_size);
@@ -139,11 +154,11 @@ public:
         m_parent.removeAt(m_currentIndex);
     }
 
-    virtual ~ArrayIterator() {}
+    virtual void index() {
+        return m_currentIndex;
+    }
 
-private:
-    Array<T>& m_parent;
-    size_t m_currentIndex;
+    virtual ~ArrayIterator() {}
 };
 
 } // namespace acc

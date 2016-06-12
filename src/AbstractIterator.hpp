@@ -27,9 +27,8 @@ namespace acc {
 template<typename T>
 class AbstractIterator {
 public:
-    virtual T& get() = 0;
-    virtual bool isValid() = 0;
-    virtual void next() = 0;
+    virtual T& next() = 0;
+    virtual bool hasNext() = 0;
     virtual void remove() = 0;
     virtual ~AbstractIterator() {};
 };

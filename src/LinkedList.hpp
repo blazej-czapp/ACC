@@ -1,5 +1,7 @@
 #pragma once
 #include <stdexcept>
+#include "Iterator.hpp"
+#include "AbstractIterator.hpp"
 
 #ifdef _DEBUG
 	#ifndef DBG_NEW
@@ -8,8 +10,12 @@
 	#endif
 #endif  
 
+namespace acc {
+
 template <typename T>
 class LinkedListIterator;
+template <typename T>
+class LinkedListReverseIterator;
 
 template <typename T>
 class Node {
@@ -38,6 +44,13 @@ public:
 		m_size = 0;
 	}
 
+	LinkedList(LinkedList<T> &other) : LinkedList()
+	{
+		for(Iterator<T> it = other.iterator();it.hasNext();) {
+			this->add(it.next());
+		}
+	}
+
 	void add(T element) {
 		if (head == NULL) {
 			head = new Node<T>(element);
@@ -51,8 +64,44 @@ public:
 		m_size++;
 	}
 
-	void addAt(int index, T element) {
+	bool addAt(int index, T element) {
+		if(index == 0) {
+			Node<T> *new_one = new Node<T>(element);
+			new_one->next = head;
+			head->prev = new_one;
+			head = new_one;
+			m_size++;
+			return true;
+		} 
 
+		if(index == m_size-1) {
+			Node<T> *new_one = new Node<T>(element);
+			new_one->prev = tail;
+			tail->next = new_one;
+			tail = new_one;
+			m_size++;
+			return true;
+		} 
+
+		//Middle element.
+		Node<T> *node = head;
+		int position = 0;
+		while(position < index) {
+			if(node == NULL) {
+				return false;
+			}
+			node = node->next;
+			position++;
+		}
+
+		Node<T> *new_one = new Node<T>(element);
+		node->prev->next = new_one;
+		new_one->next = node;
+		new_one->prev = node->prev;
+		node->prev = new_one;
+
+		m_size++;
+		return true;
 	}
 
 	T get(int index) {
@@ -70,16 +119,21 @@ public:
 		if (current_node != NULL) {
 			return current_node->element;
 		} else {
-			throw std::exception("LinkedList get could not reach element.");
+			//TODO: ...
+			//throw std::exception("LinkedList get could not reach element.");
 		}
 	}
 
 	/* Returns true if element was found. */
 	bool remove(const T& object) {
-		Node* current_node = head;
+		Node<T>* current_node = head;
 		while (true) {
-			if (current_node == NULL) return false;
-			if (current_node->element == object) break;
+			if (current_node == NULL) {
+				return false;	
+			} 
+			if (current_node->element == object) {
+				break;
+			}
 			current_node = current_node->next;
 		}
 
@@ -89,10 +143,13 @@ public:
 
 	bool removeAt(const int index) {
 		int position = 0;
-		Node* current_node = head;
+		Node<T>* current_node = head;
 		while (position < index) {
-			if (current_node == NULL) return false;
+			if (current_node == NULL) {
+				return false;
+			}
 			current_node = current_node->next;
+			position++;
 		}
 		delete_node(current_node);
 		return true;
@@ -102,8 +159,12 @@ public:
 		return m_size;
 	}
 
-	Iterator<T> iter() {
+	Iterator<T> iterator() {
 		return Iterator<T>(new LinkedListIterator<T>(this));
+	}
+
+	Iterator<T> reverse() {
+		return Iterator<T>(new LinkedListReverseIterator<T>(this));
 	}
 
 	~LinkedList() {
@@ -133,61 +194,79 @@ private:
 };
 
 template <typename T>
-class LinkedListIterator : public Iterator<T> {
+class LinkedListIterator : public AbstractIterator<T> {
 private:
 	LinkedList<T> *list;
 	Node<T> *current;
-	bool current_element_was_removed;
+	Node<T> *prev;
 public:
-	LinkedListIterator(LinkedList<T> *p_list) : 
-		Iterator(NULL),
-		list(p_list)
+	LinkedListIterator(LinkedList<T> *p_list) : list(p_list)
 	{
 		current = list->head;
-		current_element_was_removed = false;
-	}
-
-	T operator*() {
-		if (current_element_was_removed) {
-			throw std::exception("Current element was removed!");
-		}
-
-		if (current != NULL) {
-			return current->element;
-		} else {
-			throw std::exception("LinkedListIterator operator* access to wrong element.");
-		}
+		prev = NULL;
 	}
 
 	virtual bool hasNext() {
-		if (current_element_was_removed) {
-			throw std::exception("Current element was removed!");
-		}
-
 		return current != NULL;
 	}
 
-	virtual void next() {
-		if (current_element_was_removed) {
-			current_element_was_removed = false;
-			return; //Do nothing remove moved pointer to next.
-		}
-
-		if (current != NULL) {
+	virtual T& next() {
+		if(current != NULL) {
+			prev = current;
 			current = current->next;
+			return prev->element;
 		} else {
-			throw std::exception("LinkedListIterator next gone to far.");
+			//TODO: throw an error here 
 		}
 	}
 
 	virtual void remove() {
-		Node<T>* next_current = current->next;
-		list->delete_node(current);
-		current = next_current;
-		current_element_was_removed = true;
+		if(prev != NULL) {
+			list->delete_node(prev);
+		} else {
+			//TODO: throw an error here? 
+		}
 	}
 
 	virtual ~LinkedListIterator() {
 
 	}
 };
+
+template<typename T>
+class LinkedListReverseIterator : public AbstractIterator<T> {
+private:
+	LinkedList<T> *list;
+	Node<T> *current;
+	Node<T> *prev;
+public:
+	LinkedListReverseIterator(LinkedList<T> *p_list) : list(p_list)
+	{
+		current = list->tail;
+		prev = NULL;
+	}
+
+	virtual bool hasNext() {
+		return current != NULL;
+	}
+
+	virtual T& next() {
+		if(current != NULL) {
+			prev = current;
+			current = current->prev;
+			return prev->element;
+		} else {
+			//TODO: ...
+		}
+	}
+
+	virtual void remove() {
+		if(prev != NULL) {
+			list->delete_node(prev);
+		} else {
+			//TODO: ...
+		}
+	}
+};
+
+} //namespace acc

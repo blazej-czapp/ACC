@@ -23,30 +23,30 @@
 #pragma once
 
 #include <memory>
-
+#include <iostream>
 #include "AbstractIterator.hpp"
 
 namespace acc {
 
 /*
- * An adapter allowing different concrete iterator implementations to be used through a single object type.
+ * An adapter allowing different concrete iterator implementations to be used 
+ * through a single object type. So a list can return an Iterator by copy 
+ * not by pointer.
  */
 template<typename T>
 class Iterator : public AbstractIterator<T> {
+private:
+    std::shared_ptr<AbstractIterator<T> > m_iterator;
 public:
     Iterator(AbstractIterator<T>* iterator) : m_iterator(iterator) {}
     Iterator(const Iterator<T>& other) : m_iterator(other.m_iterator) {}
 
-    virtual T& get() {
-        return m_iterator->get();
+    virtual T& next() {
+        return m_iterator->next();
     }
 
-    virtual bool isValid() {
-        return m_iterator->isValid();
-    }
-
-    virtual void next() {
-        m_iterator->next();
+    virtual bool hasNext() {
+        return m_iterator->hasNext();
     }
 
     virtual void remove() {
@@ -54,9 +54,6 @@ public:
     }
 
     virtual ~Iterator() {}
-
-private:
-    std::shared_ptr<AbstractIterator<T> > m_iterator;
 };
 
 } // namespace acc
