@@ -225,14 +225,75 @@ void test_addAt__last_element() {
 }
 
 void test_forward_iterator__remove_first() {
+	printf("test_forward_iterator__remove_first\n");
+	LinkedList<int> list;
+	for(int i=0;i<10;i++) {
+		list.add(i*i);
+	}
 
+	Iterator<int> iterator = list.iterator();
+	iterator.remove();
+
+	if(list.size() != 9) {
+		printf("test_forward_iterator__remove_first wrong list size found %d should be 9\n", list.size());		
+	}
+
+	for(int i=1;i<10;i++) {
+		if(list.get(i-1) != i*i) {
+			printf("test_forward_iterator__remove_first wrong value on list %d\n", list.get(i-1));
+		}
+	}
 }
 
 void test_forward_iterator__remove_midle() {
+	printf("test_forward_iterator__remove_midle\n");
+	LinkedList<int> list;
+	for(int i=0;i<10;i++) {
+		list.add(i*i);
+	}
 
+	Iterator<int> iterator = list.iterator();
+	for (int i = 0; i < 5; i++)
+	{
+		iterator.next();
+	}
+	iterator.remove();
+	
+	for(int i=0;i<9;i++) {
+		if(i < 5 && list.get(i) != i*i) {
+			printf("test_forward_iterator__remove_midle pre found %d should be %d\n",list.get(i), i*i);
+		}
+
+		if(i >= 5 && list.get(i) != (i+1)*(i+1)) {
+			printf("test_forward_iterator__remove_midle post found %d should be %d\n",list.get(i), i*i);
+		}
+	}	
 }
 
 void test_forward_iterator__remove_last() {
+	printf("test_forward_iterator__remove_last\n");
+	LinkedList<int> list;
+	for(int i=0;i<10;i++) {
+		list.add(i*i);
+	}
+
+	Iterator<int> iterator = list.iterator();
+	for (int i = 0; i < 9; i++)
+	{
+		iterator.next();
+	}
+	iterator.remove();
+
+	if(list.size() != 9) {
+		printf("%test_forward_iterator__remove_last expected list size 9 was %d\n", list.size());
+	}
+
+	for(int i=0;i<9;i++) {
+		if(list.get(i) != i*i) {
+			printf("test_forward_iterator__remove_last expected %d found %d\n", i*i, list.get(i));
+		}
+	}
+
 
 }
 
@@ -240,7 +301,9 @@ void test_forward_iterator__remove_all() {
 
 }
 
-
+void test_reverse_iterator__iteration() {
+	
+}
 
 int main() {
 	test_iterator__iteration();
@@ -256,5 +319,9 @@ int main() {
 	test_addAt__first_element();
 	test_addAt__middle_element();
 	test_addAt__last_element();
+
+	test_forward_iterator__remove_first();
+	test_forward_iterator__remove_midle();
+	test_forward_iterator__remove_last();
 	return 0;
 }
