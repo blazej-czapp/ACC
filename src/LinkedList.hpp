@@ -34,6 +34,7 @@ public:
 template <typename T>
 class LinkedList {
 	friend class LinkedListIterator<T>;
+	friend class LinkedListReverseIterator<T>;
 private:
 	int m_size;
 	Node<T> *head, *tail;
@@ -104,7 +105,8 @@ public:
 		return true;
 	}
 
-	T get(int index) {
+	//TODO: This probably should return reference not copy. 
+	T& get(int index) {
 		int position = 0;
 		Node<T> *current_node = head;
 		while (position < index) {
@@ -251,33 +253,51 @@ class LinkedListReverseIterator : public AbstractIterator<T> {
 private:
 	LinkedList<T> *list;
 	Node<T> *current;
-	Node<T> *prev;
+	Node<T> *nextAfterDelete;
+	int position;
 public:
 	LinkedListReverseIterator(LinkedList<T> *p_list) : list(p_list)
 	{
 		current = list->tail;
-		prev = NULL;
+		nextAfterDelete = NULL;
+		position = list->size() - 1;
 	}
 
-	virtual bool hasNext() {
-		return current != NULL;
+	virtual int index() {
+		return position;
 	}
 
-	virtual T& next() {
+	virtual T& get() {
 		if(current != NULL) {
-			prev = current;
-			current = current->prev;
-			return prev->element;
-		} else {
-			//TODO: ...
+			return current->element;
 		}
 	}
 
-	virtual void remove() {
-		if(prev != NULL) {
-			list->delete_node(prev);
+	virtual bool hasCurrent() {
+		return current != NULL || nextAfterDelete != NULL;
+	}
+
+	virtual void next() {
+		if(current == NULL && nextAfterDelete != NULL) {
+			current = nextAfterDelete;
+			nextAfterDelete = NULL;
+			position--;
+		} else if(current != NULL) {
+			current = current->prev;
+			position--;
 		} else {
-			//TODO: ...
+			//throw something
+		}
+		
+	}
+
+	virtual void remove() {
+		if(current != NULL) {
+			nextAfterDelete = current->prev;
+			list->delete_node(current);
+			current = NULL;
+		} else {
+			//throw something
 		}
 	}
 };

@@ -298,11 +298,128 @@ void test_forward_iterator__remove_last() {
 }
 
 void test_forward_iterator__remove_all() {
+	printf("test_forward_iterator__remove_all\n");
+	LinkedList<int> list;
+	for(int i=0;i<10;i++) {
+		list.add(i*i);
+	}
 
+	
+	for (Iterator<int> it = list.iterator(); it.hasCurrent(); it.next()) {
+		it.remove();
+	}
+
+	if(list.size() != 0) {
+		printf("test_forward_iterator__remove_all is not 0 - %d\n", list.size());
+	}
 }
 
 void test_reverse_iterator__iteration() {
+	printf("test_reverse_iterator__iteration\n");
+	LinkedList<int> list;
+	for(int i=0; i < 10; i++) {
+		list.add(i*i);
+	}
+
+	int i = 9;
+	for(Iterator<int> it=list.reverse();it.hasCurrent();it.next(), i--) {
+		if(it.get() != i*i) {
+			printf("test_reverse_iterator__iteration found %d should %d\n", it.get(), i*i);
+		}
+	}
+}
+
+void test_reverse_remove__first() {
+	printf("test_reverse_remove__first\n");
+	LinkedList<int> list;
+	for(int i=0; i < 10; i++) {
+		list.add(i*i);
+	}
+
+	Iterator<int> iterator = list.reverse();
+	iterator.remove();
+	iterator.next();
+
+	if(list.size() != 9) {
+		printf("test_reverse_remove__first list size should be 9 is %d\n", list.size());
+	}
 	
+	for(int i=8; i >= 0; iterator.next(), i--) {
+		if(list.get(i) != i*i || iterator.get() != i*i) {
+			printf("test_reverse_remove__first expected %d list.get - %d, iterator %d\n", i*i, list.get(i), iterator.get());
+		}
+	}
+}
+
+void test_revers_remove__middle() {
+	printf("test_revers_remove__middle\n");
+	LinkedList<int> list;
+	for(int i=0; i < 10; i++) {
+		list.add(i*i);
+	}
+
+	Iterator<int> iterator = list.reverse();
+	for(int i=8;i>=5;i--) {
+		iterator.next();
+	}
+	iterator.remove();
+	iterator.next();
+
+	if(list.size() != 9) {
+		printf("test_revers_remove__middle wrong size %d should be 9\n", list.size());
+	}
+
+	for(int i=4; i >= 0; iterator.next(), i--) {
+		if(list.get(i) != i*i || iterator.get() != i*i) {
+			printf("test_revers_remove__middle wrong value list.get - %d, iterator - %d, should be %d\n", list.get(i), iterator.get(), i*i);
+		}
+	}
+
+	for(int i=5;i<9;i++) {
+		if(list.get(i) != (i+1)*(i+1)) {
+			printf("test_revers_remove__middle wrong value list.get - %d, should be %d\n", list.get(i), (i+1)*(i+1));
+		}
+	}
+}
+
+void test_reverse_remove__last() {
+	printf("test_reverse_remove__last\n");
+	LinkedList<int> list;
+	for(int i=0; i < 10; i++) {
+		list.add(i*i);
+	}
+
+	Iterator<int> iterator = list.reverse();
+	for(int i=9;i>0;i--) {
+		iterator.next();
+	}
+	iterator.remove();
+
+	if(list.size() != 9) {
+		printf("test_reverse_remove__last wrong list size %d should be 9\n", list.size());
+	}
+	
+	for(int i=1; i<10;i++) {
+		if(list.get(i-1) != i*i) {
+			printf("test_reverse_remove__last wrong value should be %d found %d\n", i*i, list.get(i-1));
+		}
+	}
+}
+
+void test_reverse_remove__all() {
+	printf("test_reverse_remove__all\n");
+	LinkedList<int> list;
+	for(int i=0; i < 10; i++) {
+		list.add(i*i);
+	}
+
+	for(Iterator<int> it=list.reverse(); it.hasCurrent();it.next()) {
+		it.remove();
+	}
+
+	if(list.size() != 0) {
+		printf("test_reverse_remove__all wrong list size %d should be 0\n", list.size());	
+	}
 }
 
 int main() {
@@ -323,5 +440,13 @@ int main() {
 	test_forward_iterator__remove_first();
 	test_forward_iterator__remove_midle();
 	test_forward_iterator__remove_last();
+	test_forward_iterator__remove_all();
+
+	test_reverse_iterator__iteration();
+	test_reverse_remove__first();
+	test_revers_remove__middle();
+	test_reverse_remove__last();
+	test_reverse_remove__all();
+	
 	return 0;
 }
