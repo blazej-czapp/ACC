@@ -14,7 +14,7 @@ public:
 	
 	//stage 2. 
 	virtual bool contains(const T &element) const = 0;
-	//virtual int indexOf(const T &element) const = 0;
+	virtual int indexOf(const T &element) const = 0;
 	//virtual int lastIndexOf(const T &element) const = 0;
 
 	virtual Iterator<T> iterator() = 0;

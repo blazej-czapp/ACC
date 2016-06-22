@@ -160,6 +160,15 @@ public:
         return false;
     }
 
+    virtual int indexOf(const T &element) const {
+          for(int i=0;i<m_size;i++) {
+            if(m_content[i] == element) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     friend std::ostream& operator<<(std::ostream &out, const ArrayList<T>& vec) {
         out << "[";
         for (int i = 0; i < vec.m_size; i++) {

@@ -184,6 +184,19 @@ public:
 		return false;
 	}
 
+	virtual int indexOf(const T &element) const {
+     	Node<T> *current = head;
+     	int i = 0;
+		while(current != NULL) {
+			if(current->element == element) {
+				return i;
+			}
+			current = current->next;
+			i++;
+		}
+		return -1;   
+    }
+
 	virtual ~LinkedList() {
 		while (tail != NULL)
 		{
