@@ -64,7 +64,7 @@ public:
 
     }
 
-    ArrayList(const ArrayList &other) : 
+    ArrayList(const ArrayList& other) : 
         m_size(other.m_size), 
         m_capacity(other.m_capacity), 
         m_content(new T[m_capacity]) 
@@ -168,11 +168,11 @@ public:
 template<typename T>
 class ArrayIterator : public AbstractIterator<T> {
 private:
-    Array<T>& m_parent;
+    ArrayList<T>& m_parent;
     int m_currentIndex;
     bool currentElementWasRemoved;
 public:
-    ArrayIterator(Array<T> &parent) : 
+    ArrayIterator(ArrayList<T> &parent) : 
         m_parent(parent), 
         m_currentIndex(0),
         currentElementWasRemoved(false)
@@ -214,10 +214,10 @@ public:
 template<typename T>
 class ArrayReverseIterator : public AbstractIterator<T> {
 private:
-    Array<T>& m_parent;
+    ArrayList<T>& m_parent;
     int m_currentIndex;
 public:
-    ArrayReverseIterator(Array<T> &parent) : 
+    ArrayReverseIterator(ArrayList<T> &parent) : 
         m_parent(parent), 
         m_currentIndex(parent.m_size-1)
     {

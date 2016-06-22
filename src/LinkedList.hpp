@@ -1,5 +1,6 @@
 #pragma once
 #include <stdexcept>
+#include "List.hpp"
 #include "Iterator.hpp"
 #include "AbstractIterator.hpp"
 
@@ -32,7 +33,7 @@ public:
 
 
 template <typename T>
-class LinkedList {
+class LinkedList : public List<T> {
 	friend class LinkedListIterator<T>;
 	friend class LinkedListReverseIterator<T>;
 private:
@@ -52,7 +53,7 @@ public:
 		}
 	}
 
-	void add(T element) {
+	virtual void add(T element) {
 		if (head == NULL) {
 			head = new Node<T>(element);
 			tail = head;
@@ -65,14 +66,14 @@ public:
 		m_size++;
 	}
 
-	bool addAt(int index, T element) {
+	virtual void addAt(int index, T element) {
 		if(index == 0) {
 			Node<T> *new_one = new Node<T>(element);
 			new_one->next = head;
 			head->prev = new_one;
 			head = new_one;
 			m_size++;
-			return true;
+			return;
 		} 
 
 		if(index == m_size-1) {
@@ -81,7 +82,7 @@ public:
 			new_one->next = tail;
 			tail->prev->next = new_one;
 			m_size++;
-			return true;
+			return;
 		} 
 
 		//Middle element.
@@ -89,7 +90,7 @@ public:
 		int position = 0;
 		while(position < index) {
 			if(node == NULL) {
-				return false;
+				return; //todo: change this to throw
 			}
 			node = node->next;
 			position++;
@@ -102,11 +103,9 @@ public:
 		node->prev = new_one;
 
 		m_size++;
-		return true;
 	}
 
-	//TODO: This probably should return reference not copy. 
-	T& get(int index) {
+	virtual T& operator[](int index) {
 		int position = 0;
 		Node<T> *current_node = head;
 		while (position < index) {
@@ -127,7 +126,7 @@ public:
 	}
 
 	/* Returns true if element was found. */
-	bool remove(const T& object) {
+	virtual bool remove(const T& object) {
 		Node<T>* current_node = head;
 		while (true) {
 			if (current_node == NULL) {
@@ -143,33 +142,38 @@ public:
 		return true; 
 	}
 
-	bool removeAt(const int index) {
+	virtual void removeAt(const int index) {
 		int position = 0;
 		Node<T>* current_node = head;
 		while (position < index) {
 			if (current_node == NULL) {
-				return false;
+				return; //throw something here.
 			}
 			current_node = current_node->next;
 			position++;
 		}
 		delete_node(current_node);
-		return true;
 	}
 
-	int size() {
+	virtual int size() const {
 		return m_size;
 	}
 
-	Iterator<T> iterator() {
+	virtual void clear() {
+		while(head != NULL) {
+			delete_node(head);
+		}
+	}
+
+	virtual Iterator<T> iterator() {
 		return Iterator<T>(new LinkedListIterator<T>(this));
 	}
 
-	Iterator<T> reverse() {
+	virtual Iterator<T> reverse() {
 		return Iterator<T>(new LinkedListReverseIterator<T>(this));
 	}
 
-	~LinkedList() {
+	virtual ~LinkedList() {
 		while (tail != NULL)
 		{
 			delete_node(tail);
