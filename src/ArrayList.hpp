@@ -139,7 +139,8 @@ public:
     }
 
     virtual void clear() {
-
+        //Should we reset m_content to initial size? 
+        m_size = 0; 
     }
 
     virtual Iterator<T> iterator() {
@@ -148,6 +149,15 @@ public:
 
     virtual Iterator<T> reverse() {
         return Iterator<T>(new ArrayReverseIterator<T>(*this));
+    }
+
+    virtual bool contains(const T &element) const {
+        for(int i=0;i<m_size;i++) {
+            if(m_content[i] == element) {
+                return true;
+            }
+        }
+        return false;
     }
 
     friend std::ostream& operator<<(std::ostream &out, const ArrayList<T>& vec) {

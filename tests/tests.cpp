@@ -404,6 +404,29 @@ void test_reverse_remove__all(List<int> &list) {
 	}
 }
 
+void test_contains(List<int> &list) {
+	printf("test_contains\n");
+	for(int i=0; i < 10; i++) {
+		list.add(i*i);
+	}
+
+	if(!list.contains(0)) {
+		printf("test_contains failed for 0\n");
+	}
+
+	if(!list.contains(81)) {
+		printf("test_contains failed for 81 last\n");
+	}
+
+	if(!list.contains(25)) {
+		printf("test_contains failed for 25 middle\n");
+	}
+
+	if(list.contains(300)) {
+		printf("test_contains failed, found 300\n");
+	}
+}
+
 int main() {
 
 	/* LinkedList */
@@ -486,6 +509,11 @@ int main() {
 		test_reverse_remove__all(list);
 	}
 
+	{
+		LinkedList<int> list;
+		test_contains(list);
+	}
+
 	/* ArrayListList */
 	printf("--- ArrayListList ---\n");
 	{
@@ -564,6 +592,11 @@ int main() {
 	{
 		ArrayList<int> list;
 		test_reverse_remove__all(list);
+	}
+
+	{
+		ArrayList<int> list;
+		test_contains(list);
 	}
 
 	return 0;

@@ -173,6 +173,17 @@ public:
 		return Iterator<T>(new LinkedListReverseIterator<T>(this));
 	}
 
+	virtual bool contains(const T &element) const {
+		Node<T> *current = head;
+		while(current != NULL) {
+			if(current->element == element) {
+				return true;
+			}
+			current = current->next;
+		}
+		return false;
+	}
+
 	virtual ~LinkedList() {
 		while (tail != NULL)
 		{
