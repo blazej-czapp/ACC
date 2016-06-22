@@ -197,6 +197,20 @@ public:
 		return -1;   
     }
 
+    virtual int lastIndexOf(const T &element) const {
+        Node<T> *current = tail;
+        int i = m_size-1;
+        while(current != NULL) {
+        	if(current->element == element) {
+        		return i;
+        	}
+        	i--;
+        	current = current->prev;
+        }
+
+        return -1;
+    }
+
 	virtual ~LinkedList() {
 		while (tail != NULL)
 		{

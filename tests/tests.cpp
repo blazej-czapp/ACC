@@ -432,6 +432,10 @@ void test_indexOf(List<int> &list) {
 	for(int i=0; i < 10; i++) {
 		list.add(i*i);
 	}
+	list.add(81);
+	list.add(81);
+	list.add(81);
+	list.add(100);
 
 	if(list.indexOf(0) != 0) {
 		printf("test_indexOf failed for 0\n");	
@@ -441,12 +445,47 @@ void test_indexOf(List<int> &list) {
 		printf("test_indexOf failed for 9\n");	
 	}
 
+	if(list.indexOf(100) != 13) {
+		printf("test_indexOf failed for 9\n");	
+	}
+
 	if(list.indexOf(16) != 4) {
 		printf("test_indexOf failed for 16\n");	
 	}
 
 	if(list.indexOf(300) != -1) {
 		printf("test_indexOf failed for 300\n");	
+	}
+}
+
+void test_lastIndexOf(List<int> &list) {
+	printf("test_lastIndexOf\n");
+	for(int i=0; i < 10; i++) {
+		list.add(i*i);
+	}
+	list.add(81);
+	list.add(81);
+	list.add(81);
+	list.add(100);
+
+	if(list.lastIndexOf(0) != 0) {
+		printf("test_lastIndexOf failed for 0\n");	
+	}
+
+	if(list.lastIndexOf(81) != 12) {
+		printf("test_lastIndexOf failed for 9\n");	
+	}
+
+	if(list.lastIndexOf(100) != 13) {
+		printf("test_lastIndexOf failed for 9\n");	
+	}
+
+	if(list.lastIndexOf(16) != 4) {
+		printf("test_lastIndexOf failed for 16\n");	
+	}
+
+	if(list.lastIndexOf(300) != -1) {
+		printf("test_lastIndexOf failed for 300\n");	
 	}
 }
 
@@ -540,6 +579,10 @@ int main() {
 		LinkedList<int> list;
 		test_indexOf(list);
 	}
+	{
+		LinkedList<int> list;
+		test_lastIndexOf(list);
+	}
 
 	/* ArrayListList */
 	printf("--- ArrayListList ---\n");
@@ -628,6 +671,10 @@ int main() {
 	{
 		ArrayList<int> list;
 		test_indexOf(list);
+	}
+	{
+		ArrayList<int> list;
+		test_lastIndexOf(list);
 	}
 
 	return 0;

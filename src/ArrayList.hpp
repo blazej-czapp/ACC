@@ -169,6 +169,15 @@ public:
         return -1;
     }
 
+    virtual int lastIndexOf(const T &element) const {
+         for(int i=m_size-1; i >= 0; i--) {
+            if(m_content[i] == element) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     friend std::ostream& operator<<(std::ostream &out, const ArrayList<T>& vec) {
         out << "[";
         for (int i = 0; i < vec.m_size; i++) {
